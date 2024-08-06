@@ -90,7 +90,6 @@ public class UpstreamNetworkMonitor {
     private static final boolean VDBG = false;
 
     // Copied from frameworks/base/core/java/android/provider/Settings.java
-    private static final String ALWAYS_ON_VPN_LOCKDOWN = "always_on_vpn_lockdown";
     private static final String TETHERING_ALLOW_VPN_UPSTREAMS = "tethering_allow_vpn_upstreams";
 
     public static final int EVENT_ON_CAPABILITIES   = 1;
@@ -358,13 +357,8 @@ public class UpstreamNetworkMonitor {
      */
     public UpstreamNetworkState getCurrentPreferredUpstream() {
         // Use VPN upstreams if hotspot settings allow.
-        if (isAllowedToUseVpnUpstreams()) {
-            if (mTetheringUpstreamVpn != null) {
-                return mNetworkMap.get(mTetheringUpstreamVpn);
-            } else if (Settings.Secure.getInt(mContext.getContentResolver(),
-                    ALWAYS_ON_VPN_LOCKDOWN, 0) == 1) {
-                return null;
-            }
+        if (mTetheringUpstreamVpn != null && isAllowedToUseVpnUpstreams()) {
+            return mNetworkMap.get(mTetheringUpstreamVpn);
         }
         final UpstreamNetworkState dfltState = (mDefaultInternetNetwork != null)
                 ? mNetworkMap.get(mDefaultInternetNetwork)
